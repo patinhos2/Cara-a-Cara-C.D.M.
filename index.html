@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cara a Cara C.D.M. v1</title>
+    <style>
+        /* ==========================================================================
+           ESTILIZAÇÃO PRETO E ROXO (TEMA CARA A CARA C.D.M.)
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        body { 
+            background: #08040e; 
+            color: #f3e8ff; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Telas (Containers principais) */
+        .screen { 
+            width: 100%;
+            max-width: 900px; 
+            background: #130a22; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
+            border: 1px solid #311852;
+            text-align: center;
+        }
+
+        /* Logo e Título */
+        h1.main-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 36px;
+            color: #c084fc;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+        }
+        .main-logo { height: 45px; object-fit: contain; }
+
+        h2 { font-size: 26px; margin-bottom: 10px; color: #e9d5ff; font-weight: 700; }
+        p { color: #a78bfa; margin-bottom: 30px; font-size: 15px; }
+
+        /* Cabeçalho da Partida */
+        .game-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1a0f2e; padding: 15px 25px; border-radius: 14px;
+            margin-bottom: 25px; border: 1px solid #3b1d66;
+            text-align: left;
+        }
+        .instructions { font-size: 14px; color: #a78bfa; margin-top: 5px; font-weight: 600;}
+
+        /* Grid de Cartas */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin: 25px 0; }
+
+        /* Estilo Individual dos Cards */
+        .card { 
+            background: #1a0f2e; color: #f3e8ff; border-radius: 14px; cursor: pointer; 
+            padding: 10px; text-align: center; border: 3px solid transparent; 
+            transition: all 0.25s ease; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            user-select: none; 
+        }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #6d28d9; }
+        .card img { width: 100%; aspect-ratio: 1; border-radius: 10px; object-fit: cover; background: #2e1a4a; margin-bottom: 8px; pointer-events: none; }
+        .card b { font-size: 14px; display: block; color: #e9d5ff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; }
+        
+        /* Mecânica de Cliques */
+        .card.eliminated { opacity: 0.25; transform: scale(0.95); border-color: transparent !important; }
+        .card.eliminated::after {
+            content: '❌'; position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); font-size: 42px; pointer-events: none;
+            text-shadow: 0 0 10px rgba(0,0,0,0.9);
+        }
+        .card.maybe { border-color: #00bfff !important; box-shadow: 0 0 15px rgba(0, 191, 255, 0.7); background: #111a2e; transform: scale(1.02); }
+
+        /* Rodapé com Personagem Secreto */
+        .secret-panel { 
+            margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #2e164d, #130a22); 
+            border-radius: 16px; border: 1px solid #7c3aed; display: inline-block; min-width: 280px;
+        }
+        .secret-panel h3 { font-size: 13px; color: #d8b4fe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .secret-panel h4 { font-size: 22px; color: #fff; font-weight: 700; }
+
+        /* Botão Reiniciar Geral */
+        button { 
+            padding: 12px 24px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+            background: #7c3aed; color: white; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.4); margin-top: 10px;
+        }
+        button:hover { background: #6d28d9; transform: translateY(-1px); }
+
+        /* ==========================================================================
+           ESTILO DO BOTÃO DE PATO ROSA (INTEGRADO)
+           ========================================================================== */
+        .btn-pato-rosa {
+            background: #ff69b4 !important; /* Rosa Choque */
+            color: #ffffff !important;
+            font-size: 18px !important;
+            padding: 15px 30px !important;
+            border-radius: 50px !important; /* Formato bem arredondado */
+            border: 3px solid #ff1493 !important;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.5) !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin: 15px auto 25px auto;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pato-rosa:hover {
+            background: #ff1493 !important;
+            transform: scale(1.05) translateY(-2px) !important;
+            box-shadow: 0 12px 25px rgba(255, 20, 147, 0.7) !important;
+        }
+
+        /* Animação do Patinho Rodando */
+        .pato-cone {
+            display: inline-block;
+            font-size: 26px;
+            animation: patoRodando 3s linear infinite;
+        }
+
+        @keyframes patoRodando {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="main-title">
+        <img src="titulo.png" alt="Logo" class="main-logo" onerror="this.style.display='none'">
+        Cara a Cara C.D.M.
+    </h1>
+
+    <div id="screen-select" class="screen">
+        <h2>Escolha</h2>
+        <p>Selecione a sua pessoa. O seu oponente fará perguntas para adivinhar.</p>
+        
+        <button onclick="escolherAleatorio()" class="btn-pato-rosa">
+            <span class="pato-cone">🦆</span> Aleatório
+        </button>
+
+        <div id="select-grid" class="grid"></div>
+    </div>
+
+    <div id="screen-game" class="screen hidden">
+        <div class="game-header">
+            <div>
+                <h2 style="font-size: 22px; margin-bottom: 0;">Seu Tabuleiro</h2>
+                <div class="instructions">
+                    <b>1 Clique:</b> ❌ Eliminado | <b>2 Cliques:</b> 🟦 Pode ser | <b>3 Cliques:</b> Voltar ao normal
+                </div>
+            </div>
+            <button onclick="location.reload()">Sair / Novo Jogo</button>
+        </div>
+        
+        <div id="game-grid" class="grid"></div>
+
+        <div class="secret-panel">
+            <h3>Sua pessoa é:</h3>
+            <h4 id="my-secret-name">...</h4>
+        </div>
+    </div>
+
+<script>
+/* ==========================================================================
+   DADOS DOS PERSONAGENS
+   ========================================================================== */
+const pessoas = [
+  { id: 1, nome: "Abu", img: "pessoa1.png" },
+  { id: 2, nome: "Aether", img: "pessoa2.png" },
+  { id: 3, nome: "Ale", img: "pessoa3.png" },
+  { id: 4, nome: "Athena", img: "pessoa4.png" },
+  { id: 5, nome: "Caduche", img: "pessoa5.png" },
+  { id: 6, nome: "Callzy", img: "pessoa6.png" },
+  { id: 7, nome: "Compositor", img: "pessoa7.png" },
+  { id: 9, nome: "Faxineiro", img: "pessoa9.png" },
+  { id: 10, nome: "Felipe", img: "pessoa10.png" },
+  { id: 11, nome: "Gabys", img: "pessoa11.png" }, 
+  { id: 12, nome: "Joui", img: "pessoa12.png" },
+  { id: 8, nome: "Kanashi", img: "pessoa8.png" },
+  { id: 13, nome: "Loff", img: "pessoa13.png" },
+  { id: 14, nome: "Luna", img: "pessoa14.png" },
+  { id: 15, nome: "Monarca", img: "pessoa15.png" },
+  { id: 16, nome: "Moon", img: "pessoa16.png" },
+  { id: 17, nome: "Nithe", img: "pessoa17.png" },
+  { id: 18, nome: "Patinho", img: "pessoa18.png" },
+  { id: 19, nome: "T", img: "pessoa19.png" },
+  { id: 20, nome: "Tks", img: "pessoa20.png" }
+];
+
+/* ==========================================================================
+   ESTADO DO JOGO OFFLINE
+   ========================================================================== */
+let myCharId = null;
+let cardStates = {}; 
+
+// Função para gerar a imagem sem bugar se o arquivo não existir
+function getImgTag(p) {
+    return `<img src="${p.img}" onerror="this.onerror=null; this.src='https://placehold.co/120x120/1a0f2e/c084fc?text=${p.nome}';">`;
+}
+
+// Inicializa o jogo ao carregar a página
+window.onload = () => {
+    renderSelectGrid();
+};
+
+/* ==========================================================================
+   TELA 1: SELEÇÃO
+   ========================================================================== */
+function renderSelectGrid() {
+    const grid = document.getElementById('select-grid');
+    grid.innerHTML = "";
+    
+    pessoas.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `${getImgTag(p)}<b>${p.nome}</b>`;
+        card.onclick = () => startGame(p.id);
+        grid.appendChild(card);
+    });
+}
+
+/* ==========================================================================
+   TELA 2: TABULEIRO PRINCIPAL
+   ========================================================================== */
+function startGame(selectedId) {
+    myCharId = selectedId;
+    
+    // Esconde tela 1, mostra tela 2
+    document.getElementById('screen-select').classList.add('hidden');
+    document.getElementById('screen-game').classList.remove('hidden');
+
+    // Mostra quem você é no painel inferior
+    const myChar = pessoas.find(p => p.id === myCharId);
+    document.getElementById('my-secret-name').innerText = myChar ? myChar.nome : "Desconhecido";
+
+    // Cria o tabuleiro interativo
+    const grid = document.getElementById('game-grid');
+    grid.innerHTML = "";
+
+    pessoas.forEach(p => {
+        cardStates[p.id] = 0; 
+        
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `card-${p.id}`;
+        card.innerHTML = `${getImgTag(p)}<b>${p.nome}</b>`;
+        
+        // Adiciona evento de clique
+        card.onclick = () => handleCardClick(p.id);
+        grid.appendChild(card);
+    });
+}
+
+/* ==========================================================================
+   LÓGICA DOS CLIQUES NO TABULEIRO
+   ========================================================================== */
+function handleCardClick(id) {
+    const card = document.getElementById(`card-${id}`);
+    
+    // Atualiza o estado ciclando entre 0, 1 e 2
+    cardStates[id] = (cardStates[id] + 1) % 3; 
+    
+    // Remove as classes antigas
+    card.classList.remove('eliminated', 'maybe');
+    
+    // Adiciona a classe visual correta
+    if (cardStates[id] === 1) {
+        card.classList.add('eliminated');
+    } else if (cardStates[id] === 2) {
+        card.classList.add('maybe');
+    }
+}
+
+/* ==========================================================================
+   FUNÇÃO PARA ESCOLHER UM PERSONAGEM ALEATÓRIO (INTEGRADA)
+   ========================================================================== */
+function escolherAleatorio() {
+    // Sorteia um índice válido dentro da lista (método seguro)
+    const indiceAleatorio = Math.floor(Math.random() * pessoas.length);
+    const pessoaSorteada = pessoas[indiceAleatorio];
+    
+    // Inicia o jogo diretamente com o ID do personagem sorteado
+    startGame(pessoaSorteada.id);
+}
+</script>
+</body>
+</html>
